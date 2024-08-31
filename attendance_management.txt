@@ -1,0 +1,133 @@
+create database attendancemanagement;
+use attendancemanagement;
+
+-- student table
+
+create table students (
+    studentid varchar(10) not null,
+    name varchar(100) not null,
+    email varchar(100) not null,
+    phone varchar(15),
+    department varchar(50),
+    primary key (studentid)	
+);
+
+insert into students (studentid, name, email, phone, department) values
+('S1', 'John Doe', 'johndoe@example.com', '555-1234', 'Computer Science'),
+('S2', 'Jane Smith', 'janesmith@example.com', '555-5678', 'Electrical Engineering'),
+('S3', 'Alice Johnson', 'alicej@example.com', '555-8765', 'Mechanical Engineering'),
+('S4', 'Bob Brown', 'bobbrown@example.com', '555-4321', 'Civil Engineering'),
+('S5', 'Charlie Davis', 'charlied@example.com', '555-1122', 'Chemical Engineering');
+
+select * from students
+order by cast(substring(studentid, 2) as unsigned);
+
+-- courses table
+
+create table courses (
+    courseid varchar(10) not null,
+    coursename varchar(100) not null,
+    department varchar(50) not null,
+    credits int not null,
+    primary key (courseid)
+);
+
+insert into courses (courseid, coursename, department, credits) values
+('C101', 'Data Structures', 'Computer Science', 4),
+('C102', 'Circuit Analysis', 'Electrical Engineering', 3),
+('C103', 'Thermodynamics', 'Mechanical Engineering', 4),
+('C104', 'Structural Analysis', 'Civil Engineering', 4),
+('C105', 'Organic Chemistry', 'Chemical Engineering', 3);
+
+select * from courses
+order by cast(substring(courseid, 2) as unsigned);
+
+-- instructors table
+
+create table instructors (
+    instructorid varchar(10) not null,
+    name varchar(100) not null,
+    department varchar(50) not null,
+    email varchar(100) not null,
+    phone varchar(15),
+    primary key (instructorid)
+);
+
+insert into instructors (instructorid, name, department, email, phone) values
+('I1', 'Dr. Alan Turing', 'Computer Science', 'alan@example.com', '555-1235'),
+('I2', 'Dr. Nikola Tesla', 'Electrical Engineering', 'tesla@example.com', '555-5679'),
+('I3', 'Dr. James Watt', 'Mechanical Engineering', 'watt@example.com', '555-8766'),
+('I4', 'Dr. Isambard Kingdom Brunel', 'Civil Engineering', 'brunel@example.com', '555-4322'),
+('I5', 'Dr. Marie Curie', 'Chemical Engineering', 'curie@example.com', '555-1123');
+
+select * from instructors
+order by cast(substring(instructorid, 2) as unsigned);
+
+-- class schedule table
+
+create table classschedules (
+    scheduleid varchar(10) not null,
+    courseid varchar(10) not null,
+    instructorid varchar(10) not null,
+    dayofweek varchar(15) not null,
+    time varchar(10) not null,
+    location varchar(50) not null,
+    primary key (scheduleid),
+    foreign key (courseid) references courses(courseid),
+    foreign key (instructorid) references instructors(instructorid)
+);
+
+insert into classschedules (scheduleid, courseid, instructorid, dayofweek, time, location) values
+('S1', 'C101', 'I1', 'Monday', '09:00 AM', 'Room 101'),
+('S2', 'C102', 'I2', 'Tuesday', '10:00 AM', 'Room 102'),
+('S3', 'C103', 'I3', 'Wednesday', '11:00 AM', 'Room 103'),
+('S4', 'C104', 'I4', 'Thursday', '01:00 PM', 'Room 104'),
+('S5', 'C105', 'I5', 'Friday', '02:00 PM', 'Room 105');
+
+select * from classschedules
+order by cast(substring(scheduleid, 2) as unsigned);
+
+-- attendance table
+
+create table attendance (
+    attendanceid varchar(10) not null,
+    studentid varchar(10) not null,
+    scheduleid varchar(10) not null,
+    attendancedate date not null,
+    status varchar(10) not null,
+    primary key (attendanceid),
+    foreign key (studentid) references students(studentid),
+    foreign key (scheduleid) references classschedules(scheduleid)
+);
+
+insert into attendance (attendanceid, studentid, scheduleid, attendancedate, status) values
+('A1', 'S1', 'S1', '2024-08-26', 'Present'),
+('A2', 'S2', 'S2', '2024-08-26', 'Absent'),
+('A3', 'S3', 'S3', '2024-08-26', 'Present'),
+('A4', 'S4', 'S4', '2024-08-26', 'Present'),
+('A5', 'S5', 'S5', '2024-08-26', 'Absent');
+
+select * from attendance
+order by cast(substring(attendanceid, 2) as unsigned);
+
+-- course enrollment table
+
+create table enrollments (
+    enrollmentid varchar(10) not null,
+    studentid varchar(10) not null,
+    courseid varchar(10) not null,
+    enrollmentdate date not null,
+    primary key (enrollmentid),
+    foreign key (studentid) references students(studentid),
+    foreign key (courseid) references courses(courseid)
+);
+
+insert into enrollments (enrollmentid, studentid, courseid, enrollmentdate) values
+('E1', 'S1', 'C101', '2024-08-01'),
+('E2', 'S2', 'C102', '2024-08-01'),
+('E3', 'S3', 'C103', '2024-08-01'),
+('E4', 'S4', 'C104', '2024-08-01'),
+('E5', 'S5', 'C105', '2024-08-01');
+
+select * from enrollments
+order by cast(substring(enrollmentid, 2) as unsigned);
